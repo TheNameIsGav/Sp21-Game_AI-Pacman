@@ -28,7 +28,6 @@ public final class StarterGhosts extends Controller<EnumMap<GHOST,MOVE>>
 	
 	public EnumMap<GHOST,MOVE> getMove(Game game,long timeDue)
 	{
-		//GameView.addPoints(game,Color.RED,156);
 		for(GHOST ghost : GHOST.values())	//for each ghost
 		{			
 			if(game.doesGhostRequireAction(ghost))		//if ghost requires an action
