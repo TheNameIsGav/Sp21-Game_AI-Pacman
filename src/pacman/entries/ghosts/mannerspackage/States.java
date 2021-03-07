@@ -1,4 +1,4 @@
-package pacman.entries.ghosts;
+package pacman.entries.ghosts.mannerspackage;
 
 public abstract class States<T> {
 	public abstract void update(T g);

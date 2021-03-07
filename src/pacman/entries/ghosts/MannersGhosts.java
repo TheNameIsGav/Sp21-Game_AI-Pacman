@@ -5,7 +5,8 @@ import pacman.controllers.Controller;
 import pacman.game.Constants.GHOST;
 import pacman.game.Constants.MOVE;
 import pacman.game.Game;
-import pacman.entries.ghosts.GhostStates.*;
+import pacman.entries.ghosts.mannerspackage.States;
+import pacman.entries.ghosts.mannerspackage.GhostStates.*;
 
 /*
  * This is the class you need to modify for your entry. In particular, you need to
@@ -17,10 +18,11 @@ public class MannersGhosts extends Controller<EnumMap<GHOST,MOVE>>
 	public EnumMap<GHOST, MOVE> myMoves=new EnumMap<GHOST, MOVE>(GHOST.class);
 	public static States<MannersGhosts> currentState = ScatterState.instanceOf();
 	public Game game = null;
-	int internalGameTimer = 0;
+	public int internalGameTimer = 0;
 	int prevLevel = 0;
 	int prevLives = Integer.MAX_VALUE;
 	static boolean haveWeChangedStates = false;
+	public boolean shouldReverse = false;
 	
 	
 	public EnumMap<GHOST, MOVE> getMove(Game incomingGame, long timeDue)
@@ -42,6 +44,12 @@ public class MannersGhosts extends Controller<EnumMap<GHOST,MOVE>>
 		haveWeChangedStates = false;
 		
 		currentState.update(this); //states need to make modifications to myMoves to return things
+		if(shouldReverse) {
+			for(GHOST g : GHOST.values()) {
+				myMoves.put(g,  game.getGhostLastMoveMade(g).opposite());
+			}
+			shouldReverse = false;
+		}
 		
 		return myMoves;
 	}

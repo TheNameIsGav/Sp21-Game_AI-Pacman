@@ -1,17 +1,18 @@
-package pacman.entries.ghosts;
+package pacman.entries.ghosts.mannerspackage;
 
 import java.awt.Color;
 import java.util.Random;
-
 import pacman.game.Constants.DM;
 import pacman.game.Constants.GHOST;
 import pacman.game.Constants.MOVE;
+import pacman.entries.ghosts.MannersGhosts;
 import pacman.game.GameView;
 import pacman.game.internal.Node;
 
 public class GhostStates {
 	static boolean debug = true;
 	
+	//Not sure if there is a way to implement holding the ghosts back, there is no indication as to where the ghosts are timed to come out
 	public static class ChaseState extends States<MannersGhosts>{
 		
 		private final static ChaseState instance = new ChaseState();
@@ -48,16 +49,19 @@ public class GhostStates {
 				}
 				
 				//If we made it here we are chasing pac-man
+				Node[] nodes = m.game.getCurrentMaze().graph;
 				switch(g) {
+				
+				//The chase behavior for pinky and inky is kinda strange, because walls don't register on nodes. 
+				//So you have to loop through all the nodes to find the target instead of just skipping over the wall
+				//I wouldve liked if the wall nodes were there, they just had a tag that made them unwalkable. 
 				case PINKY:
 					
 					int idx = m.game.getPacmanCurrentNodeIndex();
 					int x = m.game.getNodeXCood(idx);
 					int y = m.game.getNodeYCood(idx);
-					int i = 0;
 					int target = idx;
-					Node[] nodes = m.game.getCurrentMaze().graph;
-					//System.out.println("I think pacman is moving " + m.game.getPacmanLastMoveMade());
+					//if(debug) System.out.println("I think pacman is moving " + m.game.getPacmanLastMoveMade());
 					
 					switch(m.game.getPacmanLastMoveMade()) { //get pacmans facing
 					
@@ -80,24 +84,20 @@ public class GhostStates {
 						
 					case DOWN:
 						int r = idx;
-						i = 0;
-						while(i < 4) {
+						for(int i = 0; i < 4; i++) {
 							if(m.game.getNeighbour(r, MOVE.DOWN) == -1){
 								target = r;
 								break;
 							} else {
 								r = m.game.getNeighbour(r, MOVE.DOWN);
 							}
-							target = r;
-							i++;
-							
+							target = r;							
 						}
 						break;
 
 					case LEFT:
 						int r1 = idx;
-						i = 0;
-						while(i < 4) {
+						for(int i = 0; i < 4; i++) {
 							if(m.game.getNeighbour(r1, MOVE.LEFT) == -1){
 								target = r1;
 								break;
@@ -105,46 +105,20 @@ public class GhostStates {
 								r1 = m.game.getNeighbour(r1, MOVE.LEFT);
 							}
 							target = r1;
-							i++;
 							
 						}
 						break;
 
 					case RIGHT:
-						/*x = x + 4;
-						boolean foundEasyNode11 = false;
-						for(Node n : nodes) { //easiest case, we find the node
-							if (n.x == x && n.y == y) {
-								target = n.nodeIndex;
-								foundEasyNode11 = true;
-								break;
-							}
-						}
-						
 						int r11 = idx;
-						if(!foundEasyNode11) { //Go towards the closest wall
-							boolean goingRight = true;
-							while(goingRight) {
-								if(m.game.getNeighbour(r11, MOVE.RIGHT) == -1){
-									target = r11;
-									goingRight = false;
-								} else {
-									r11 = m.game.getNeighbour(r11, MOVE.RIGHT);
-								}
-								
-							}
-						}*/
-						int r11 = idx;
-						while(i < 4) {
+						for(int i = 0; i < 4; i++) {
 							if(m.game.getNeighbour(r11, MOVE.RIGHT) == -1){
 								target = r11;
 								break;
 							} else {
 								r11 = m.game.getNeighbour(r11, MOVE.RIGHT);
 							}
-							target = r11;
-							i++;
-							
+							target = r11;						
 						}
 						break;
 						
@@ -163,9 +137,94 @@ public class GhostStates {
 					break;
 					
 					
-					
 				case INKY:
-					//if(debug) {GameView.addPoints(m.game,Color.CYAN,156);}
+					int idx1 = m.game.getPacmanCurrentNodeIndex();
+					int x1 = m.game.getNodeXCood(idx1);
+					int y1 = m.game.getNodeYCood(idx1);
+					int target1 = idx1;
+					//if(debug) System.out.println("I think pacman is moving " + m.game.getPacmanLastMoveMade());
+					
+					switch(m.game.getPacmanLastMoveMade()) { //get pacmans facing
+					
+					case UP:
+						
+						boolean foundEasyNode = false;
+						for(Node n : nodes) {
+							for (int q = 1; q <= 2; q++) {
+								for (int j = 1; j <= 2; j++) {
+									if (n.x == x1+q && n.y == y1+j) {
+										target1 = n.nodeIndex;
+										foundEasyNode = true;
+									}
+								}
+							}
+						}
+						
+						break;
+						
+					case DOWN:
+						int r = idx1;
+						for(int i = 0; i < 2; i++) {
+							if(m.game.getNeighbour(r, MOVE.DOWN) == -1){
+								target1 = r;
+								break;
+							} else {
+								r = m.game.getNeighbour(r, MOVE.DOWN);
+							}
+							target1 = r;							
+						}
+						break;
+
+					case LEFT:
+						int r1 = idx1;
+						for(int i = 0; i < 2; i++) {
+							if(m.game.getNeighbour(r1, MOVE.LEFT) == -1){
+								target1 = r1;
+								break;
+							} else {
+								r1 = m.game.getNeighbour(r1, MOVE.LEFT);
+							}
+							target1 = r1;
+							
+						}
+						break;
+
+					case RIGHT:
+
+						int r11 = idx1;
+						for(int i = 0; i < 2; i++) {
+							if(m.game.getNeighbour(r11, MOVE.RIGHT) == -1){
+								target1 = r11;
+								break;
+							} else {
+								r11 = m.game.getNeighbour(r11, MOVE.RIGHT);
+							}
+							target1 = r11;						
+						}
+						break;
+						
+					case NEUTRAL:
+						break;
+					}
+					
+					
+					//find node at from target
+					//target is 2 spaces ahead
+					//have to find vector doubled etc etc. 
+					int blinkyNode = m.game.getGhostCurrentNodeIndex(GHOST.BLINKY);
+					int d = (int) Math.sqrt(Math.pow(m.game.getNodeXCood(target1) - m.game.getNodeXCood(blinkyNode), 2) + Math.pow(m.game.getNodeYCood(target1) - m.game.getNodeYCood(blinkyNode), 2));
+					
+					
+					for(Node n : nodes) {
+						for(int i = 1; i <= d; i++) {
+							if(n.x+i == n.y && n.y+i == n.y) {
+								target1 = n.nodeIndex;
+							}
+						}
+					}
+					
+					m.myMoves.put(g, m.game.getApproximateNextMoveTowardsTarget(m.game.getGhostCurrentNodeIndex(g), target1, m.game.getGhostLastMoveMade(g), DM.PATH));
+					if(debug) {GameView.addPoints(m.game,Color.CYAN,target1);}
 					break;
 					
 					
@@ -186,15 +245,13 @@ public class GhostStates {
 
 		@Override
 		public void exit(MannersGhosts m) {
-			System.out.println("Exited Chase");
-			for (GHOST g : GHOST.values()) {
-				m.myMoves.put(g, m.game.getGhostLastMoveMade(g).opposite());
-			}
+			if(debug) if(debug) System.out.println("Exited Chase");
+			m.shouldReverse = true;
 		}
 
 		@Override
 		public void enter(MannersGhosts m, States<MannersGhosts> a) {
-			System.out.println("Entered Chase");
+			if(debug) if(debug) System.out.println("Entered Chase");
 		}
 		
 	}
@@ -238,6 +295,9 @@ public class GhostStates {
 					}
 				}
 				
+				//Ghosts obv cannot target outside of the maze, so choose approximate nearest node for corners
+				//If the pathfinding algorithm finds we are on top, it returns a neutral, which is a good substritute since in every 
+				//case the ghost only has one direction to go. 
 				//If we get here we are scattering
 				switch(g) {
 				case PINKY: //Upper Left Corner
@@ -265,15 +325,13 @@ public class GhostStates {
 
 		@Override
 		public void exit(MannersGhosts m) {
-			System.out.println("Exited Scatter");
-			for(GHOST g : GHOST.values()) {
-				m.myMoves.put(g,m.game.getGhostLastMoveMade(g).opposite());
-			}
+			if(debug) System.out.println("Exited Scatter");
+			m.shouldReverse = true;
 		}
 
 		@Override
 		public void enter(MannersGhosts m, States<MannersGhosts> a) {
-			System.out.println("Entered Scatter");
+			if(debug) System.out.println("Entered Scatter");
 			
 		}
 		
@@ -317,14 +375,15 @@ public class GhostStates {
 		@Override
 		public void exit(MannersGhosts m){
 			m.internalGameTimer = clock;
-			System.out.println("Exited Frightened");
+			if(debug) System.out.println("Exited Frightened");
 		}
 
 		@Override
 		public void enter(MannersGhosts m, States<MannersGhosts> a) {
 			clock = m.internalGameTimer;
 			prevState = a;
-			System.out.println("Entered Frightened");
+			if(debug) System.out.println("Entered Frightened");
 		}
 	}
+	
 }
