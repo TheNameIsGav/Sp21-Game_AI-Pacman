@@ -1,3 +1,4 @@
+
 package pacman.entries.ghosts.mannerspackage;
 
 import java.awt.Color;
@@ -10,8 +11,8 @@ import pacman.game.GameView;
 import pacman.game.internal.Node;
 
 public class GhostStates {
-	static boolean debug = true;
-	
+	static boolean debug = false;
+	//Couldn't implement the junction not going up caviat
 	//Not sure if there is a way to implement holding the ghosts back, there is no indication as to where the ghosts are timed to come out
 	public static class ChaseState extends States<MannersGhosts>{
 		
